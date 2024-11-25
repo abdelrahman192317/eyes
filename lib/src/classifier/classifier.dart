@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:image/image.dart' as image_lib;
-import 'package:tflite/tflite.dart';
+import 'package:tflite/tflite.dart' as cash_model;
 
 import 'package:tflite_flutter/tflite_flutter.dart';
 
@@ -14,12 +14,12 @@ import '../utils/media_player.dart';
 class Classifier {
 
   static void loadCashModel() async {
-    await Tflite.loadModel(model: cashModelPath, labels: cashLabelPath);
+    await cash_model.Tflite.loadModel(model: cashModelPath, labels: cashLabelPath);
   }
 
   static void classifyCashImage(String imagePath) async {
 
-    var output = await Tflite.runModelOnImage(
+    var output = await cash_model.Tflite.runModelOnImage(
         path: imagePath, numResults: 2, threshold: 0.1,
         imageMean: 127.5, imageStd: 127.5, asynch: true
     );
