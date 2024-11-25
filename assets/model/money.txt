@@ -1,0 +1,9 @@
+five
+ten
+twenty
+fifty
+hundred
+twoHundred
+ten
+twenty
+Can\'t Recognize
