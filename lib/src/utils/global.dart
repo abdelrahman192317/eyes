@@ -4,6 +4,7 @@ import 'package:tflite_flutter/tflite_flutter.dart';
 CameraController? myCameraController;
 
 Interpreter? classifierInterpreter;
+Interpreter? cashInterpreter;
 
 List<String>? cashLabels;
 List<String>? classifierLabels;

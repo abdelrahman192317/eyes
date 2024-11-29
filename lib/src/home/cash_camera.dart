@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../classifier/cash.dart';
 import '../classifier/classifier.dart';
 import '../utils/camera.dart';
 
@@ -26,7 +27,7 @@ class CashCameraState extends CameraAppState {
          onDoubleTap: () {
             //cash recognition
              captureImage().then((imagePath) {
-               Classifier.classifyCashImage(imagePath);
+               Cash.classifyCashImage(imagePath);
              });
            },
           child: const CameraApp()

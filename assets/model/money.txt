@@ -6,4 +6,4 @@ hundred
 twoHundred
 ten
 twenty
-Can\'t Recognize
+not Recognize

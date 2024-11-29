@@ -1,29 +1,28 @@
-import 'package:flutter/material.dart';
 
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:image/image.dart' as image_lib;
-
 import 'package:tflite_flutter/tflite_flutter.dart';
+import 'package:image/image.dart' as image_lib;
 
 import '../utils/global.dart';
 import '../utils/media_player.dart';
 
-class Classifier {
+class Cash {
 
-  static Future<void> loadClassifierModel() async {
-    classifierInterpreter = await getInterpreter(modelPath: objectModelPath);
-    classifierLabels = await getLabels(labelPath: objectLabelPath);
+  static Future<void> loadCashModel() async {
+    cashInterpreter = await getInterpreter(modelPath: cashModelPath);
+    cashLabels = await getLabels(labelPath: cashLabelPath);
   }
 
-  static Future<List<dynamic>?> classifyImage(String imagePath) async {
+  static Future<List<dynamic>?> classifyCashImage(String imagePath) async {
 
     // Get tensor input shape [1, image]
-    Tensor inputTensor = classifierInterpreter!.getInputTensors().first;
+    Tensor inputTensor = cashInterpreter!.getInputTensors().first;
     debugPrint(inputTensor.toString());
     // Get tensor output shape [1, respond]
-    Tensor outputTensor = classifierInterpreter!.getOutputTensors().first;
+    Tensor outputTensor = cashInterpreter!.getOutputTensors().first;
     debugPrint(outputTensor.toString());
 
     image_lib.Image? image;
@@ -47,25 +46,25 @@ class Classifier {
 
     final imageMatrix = List.generate(
       imageInput.height, (y) => List.generate(
-        imageInput.width, (x) {
-          final pixel = imageInput.getPixel(x, y);
-          return [pixel.r, pixel.g, pixel.b];
-        },
-      ),
+      imageInput.width, (x) {
+      final pixel = imageInput.getPixel(x, y);
+      return [pixel.r, pixel.g, pixel.b];
+    },
+    ),
     );
     debugPrint('after image matrix');
 
     // Set tensor input [1, 224, 224, 3]
     final input = [imageMatrix];
 
-    final output = [List<int>.filled(outputShape[1], 0)];
+    final output = [List<double>.filled(outputShape[1], 0)];
 
     // Run inference and get the output
-    classifierInterpreter!.run(input, output);
+    cashInterpreter!.run(input, output);
 
     debugPrint('after run');
 
-    printOutputs(output: output, labels: classifierLabels!);
+    printOutputs(output: output, labels: cashLabels!);
 
     return output;
   }
@@ -100,10 +99,9 @@ class Classifier {
   }
 
   static printOutputs({required output, required List labels}) {
-
     final result = output.first;
 
-    var maxScore = result.reduce((a, b) => (a as int) + (b as int));
+    var maxScore = result.reduce((a, b) => (a as double) + (b as double));
 
     debugPrint("maxScore: $maxScore");
 
@@ -120,16 +118,18 @@ class Classifier {
 
     debugPrint("classification length: ${classification.length}");
 
-    var values = classification.values.toList()..sort((a, b) => a.compareTo(b));
+    var values = classification.values.toList()
+      ..sort((a, b) => a.compareTo(b));
     var keys = classification.keys.toList();
 
-    String className = keys[classification.values.toList().indexOf(values.last)];
+    String className = keys[classification.values.toList().indexOf(
+        values.last)];
 
     debugPrint("classification max: $className");
 
     debugPrint("classification: $classification");
 
     MediaPlayer.speak(className);
-
   }
+
 }
